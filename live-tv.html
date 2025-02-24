@@ -1,54 +1,142 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live News UI</title>
+    <title>Firebase Data Store</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #000; color: #fff; overflow-x: hidden; }
-        .container { padding: 20px; }
-        .header { font-size: 24px; font-weight: bold; padding-bottom: 10px; }
-        .section { margin-top: 20px; }
-        .section-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-        .grid { display: flex; gap: 10px; overflow-x: auto; }
-        .card { width: 150px; background: #111; border-radius: 8px; overflow: hidden; }
-        .card img { width: 100%; height: 90px; object-fit: cover; }
-        .card p { padding: 5px; font-size: 14px; text-align: center; }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f4f4f4;
+            flex-direction: column;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="header">CNBC Awaaz</div>
-        <p>हिंदी</p>
-        
-        <div class="section">
-            <div class="section-title">Live News</div>
-            <div class="grid">
-                <div class="card">
-                    <img src="cnn_news18.jpg" alt="CNN News18">
-                    <p>CNN News18</p>
-                </div>
-                <div class="card">
-                    <img src="news18_tamil.jpg" alt="News18 Tamil Nadu">
-                    <p>News18 Tamil Nadu</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">Live Business News</div>
-            <div class="grid">
-                <div class="card">
-                    <img src="cnbc_tv18.jpg" alt="CNBC TV18">
-                    <p>CNBC TV18</p>
-                </div>
-                <div class="card">
-                    <img src="cnbc_awaaz.jpg" alt="CNBC Awaaz">
-                    <p>CNBC Awaaz</p>
-                </div>
-            </div>
-        </div>
+        <h2>Register</h2>
+        <input type="email" id="email" placeholder="Enter Email">
+        <input type="password" id="password" placeholder="Enter Password">
+        <input type="file" id="image" accept="image/*">
+        <button onclick="registerUser()">Register</button>
+
+        <h2>Stored Users</h2>
+        <div id="usersList"></div>
     </div>
+
+    <script type="module">
+        // Firebase Configuration (Replace with your Firebase config)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjjBG-Jm2JsyIBn5DfgbvPw7Ua0p_3N0c",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Register User Function
+        window.registerUser = async function () {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const image = document.getElementById("image").files[0];
+
+            if (!email || !password || !image) {
+                alert("Please fill all fields");
+                return;
+            }
+
+            try {
+                // Create user in Firebase Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const userId = userCredential.user.uid;
+
+                // Upload image to Firebase Storage
+                const storageRef = ref(storage, `users/${userId}`);
+                await uploadBytes(storageRef, image);
+
+                // Get image URL
+                const imageUrl = await getDownloadURL(storageRef);
+
+                // Save user details in Firestore
+                await addDoc(collection(db, "users"), {
+                    userId,
+                    email,
+                    imageUrl
+                });
+
+                alert("User Registered Successfully!");
+                loadUsers();
+            } catch (error) {
+                console.error("Error:", error);
+                alert(error.message);
+            }
+        };
+
+        // Load Users Function
+        async function loadUsers() {
+            const usersList = document.getElementById("usersList");
+            usersList.innerHTML = "";
+
+            const querySnapshot = await getDocs(collection(db, "users"));
+            querySnapshot.forEach((doc) => {
+                const user = doc.data();
+                usersList.innerHTML += `
+                    <div>
+                        <p>Email: ${user.email}</p>
+                        <img src="${user.imageUrl}" alt="User Image">
+                    </div>
+                `;
+            });
+        }
+
+        // Load users when page loads
+        window.onload = loadUsers;
+    </script>
+
 </body>
 </html>

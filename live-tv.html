@@ -3,138 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Authentication Debug</title>
+    <title>Login / Signup</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        .container { width: 300px; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
-        input, button { width: 100%; margin: 10px 0; padding: 10px; }
-        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            width: 250px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Enter Email</h2>
-        <input type="email" id="email" placeholder="Enter Email">
-        <button id="checkUserBtn">Next</button>
+    <h2>Enter Email</h2>
+    <input type="email" id="email" placeholder="Enter your email">
+    <button onclick="checkUser()">Next</button>
 
-        <div id="passwordSection" style="display: none;">
-            <h2>Enter Password</h2>
-            <input type="password" id="password" placeholder="Enter Password">
-            <button id="loginBtn">Login</button>
-        </div>
-
-        <div id="signupSection" style="display: none;">
-            <h2>Sign Up</h2>
-            <input type="text" id="name" placeholder="Enter Name">
-            <input type="password" id="signupPassword" placeholder="Create Password">
-            <button id="signupBtn">Sign Up</button>
-        </div>
+    <div id="passwordSection" class="hidden">
+        <h2>Enter Password</h2>
+        <input type="password" id="password" placeholder="Enter your password">
+        <button onclick="loginUser()">Login</button>
     </div>
 
-    <script type="module">
-        // 🔥 Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    <div id="signupSection" class="hidden">
+        <h2>Sign Up</h2>
+        <input type="password" id="newPassword" placeholder="Set a password">
+        <button onclick="signupUser()">Sign Up</button>
+    </div>
 
-        console.log("Firebase script loaded successfully.");
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 
-        // 🔹 Firebase Config (Your API Key)
+    <script>
+        // 🔥 Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyBjjBGJm2JsyIBn5DfgbvPw7Ua0p_3N0c",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBjjBG-Jm2JsyIBn5DfgbvPw7Ua0p_3N0c",
+            authDomain: "your-project-id.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project-id.appspot.com",
+            messagingSenderId: "your-sender-id",
+            appId: "your-app-id"
         };
 
-        // 🔥 Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        let currentEmail = "";
-
-        // 🟢 Check if user exists
+        // ✅ Check if user exists
         async function checkUser() {
             const email = document.getElementById("email").value.trim();
             if (!email) {
                 alert("Please enter an email.");
                 return;
             }
+
             console.log("Checking user:", email);
-            currentEmail = email;
 
             try {
-                const userRef = doc(db, "users", email);
-                const userSnap = await getDoc(userRef);
+                const userRef = db.collection("users").doc(email);
+                const userSnap = await userRef.get();
 
-                if (userSnap.exists()) {
-                    console.log("User exists, showing login field.");
-                    document.getElementById("passwordSection").style.display = "block";
-                    document.getElementById("signupSection").style.display = "none";
+                if (userSnap.exists) {
+                    console.log("✅ User found!");
+                    document.getElementById("passwordSection").classList.remove("hidden");
+                    document.getElementById("signupSection").classList.add("hidden");
                 } else {
-                    console.log("User not found, showing sign-up form.");
-                    document.getElementById("signupSection").style.display = "block";
-                    document.getElementById("passwordSection").style.display = "none";
+                    console.log("🚀 User not found, asking for signup.");
+                    document.getElementById("signupSection").classList.remove("hidden");
+                    document.getElementById("passwordSection").classList.add("hidden");
                 }
             } catch (error) {
-                console.error("Error checking user:", error);
-                alert("Error checking user. See console.");
+                console.error("❌ Firestore Error:", error);
+                alert("Firestore Error: " + error.message);
             }
         }
 
-        // 🟢 Login User
+        // ✅ Login Existing User
         async function loginUser() {
+            const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value.trim();
-            if (!password) {
-                alert("Please enter your password.");
-                return;
-            }
-            console.log("Attempting login:", currentEmail);
 
-            signInWithEmailAndPassword(auth, currentEmail, password)
-                .then(() => {
-                    console.log("Login successful!");
-                    alert("Login successful!");
-                    window.location.href = "https://abc.xyz"; // Redirect to abc.xyz
-                })
-                .catch(error => {
-                    console.error("Login error:", error);
-                    alert("Error: " + error.message);
-                });
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                alert("✅ Login Successful!");
+                window.location.href = "https://abc.xyz"; // Redirect on success
+            } catch (error) {
+                alert("❌ Login Failed: " + error.message);
+            }
         }
 
-        // 🟢 Register User
-        async function registerUser() {
-            const name = document.getElementById("name").value.trim();
-            const password = document.getElementById("signupPassword").value.trim();
-            if (!name || !password) {
-                alert("Please fill all fields.");
-                return;
+        // ✅ Sign Up New User
+        async function signupUser() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("newPassword").value.trim();
+
+            try {
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                await db.collection("users").doc(email).set({ email });
+
+                alert("✅ Signup Successful! Please login.");
+                document.getElementById("passwordSection").classList.remove("hidden");
+                document.getElementById("signupSection").classList.add("hidden");
+            } catch (error) {
+                alert("❌ Signup Failed: " + error.message);
             }
-
-            console.log("Registering user:", currentEmail);
-
-            createUserWithEmailAndPassword(auth, currentEmail, password)
-                .then(async () => {
-                    await setDoc(doc(db, "users", currentEmail), { name, email: currentEmail });
-                    console.log("User registered successfully.");
-                    alert("Account created successfully!");
-                    window.location.href = "https://abc.xyz"; // Redirect to abc.xyz
-                })
-                .catch(error => {
-                    console.error("Sign-up error:", error);
-                    alert("Error: " + error.message);
-                });
         }
-
-        // 🟢 Event Listeners
-        document.getElementById("checkUserBtn").addEventListener("click", checkUser);
-        document.getElementById("loginBtn").addEventListener("click", loginUser);
-        document.getElementById("signupBtn").addEventListener("click", registerUser);
     </script>
 
 </body>

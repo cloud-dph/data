@@ -3,67 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favorites</title>
+    <title>Favorite Movies</title>
     <style>
         body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
         }
         .carousel {
             display: flex;
             overflow-x: auto;
-            padding: 20px;
-            gap: 10px;
+            gap: 16px;
+            padding: 16px;
+            scroll-snap-type: x mandatory;
         }
-        .movie {
+        .movie-card {
             flex: 0 0 auto;
-            width: 150px;
+            width: 200px;
+            scroll-snap-align: start;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
             cursor: pointer;
         }
-        .movie img {
+        .movie-card img {
             width: 100%;
-            height: auto;
+            border-radius: 8px;
         }
-        .nav {
-            margin-top: 20px;
-        }
-        .nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
+        .movie-card h3 {
+            font-size: 16px;
+            margin: 8px 0;
         }
     </style>
 </head>
 <body>
-    <h2>Your Favorite Movies</h2>
-    <div class="carousel" id="favMovies"></div>
-    <div class="nav">
-        <a href="index.html">Home</a>
-        <a href="cw.html">Continue Watching</a>
+    <h1>Favorite Movies</h1>
+    <div class="carousel" id="favorites-carousel">
+        <!-- Favorite movies will be injected here -->
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const favMoviesContainer = document.getElementById('favMovies');
             const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            const carousel = document.getElementById('favorites-carousel');
 
             if (favorites.length === 0) {
-                favMoviesContainer.innerHTML = '<p>No favorite movies added yet.</p>';
+                carousel.innerHTML = '<p>No favorite movies yet.</p>';
                 return;
             }
 
-            favorites.forEach(movie => {
-                const movieDiv = document.createElement('div');
-                movieDiv.classList.add('movie');
-                movieDiv.innerHTML = `<img src="${decodeURIComponent(movie.poster)}" alt="${decodeURIComponent(movie.title)}">`;
-                movieDiv.addEventListener('click', () => {
-                    const queryParams = new URLSearchParams(movie).toString();
-                    window.location.href = `index.html?${queryParams}`;
+            favorites.forEach(movieId => {
+                // Fetch movie data based on movieId
+                // This is a placeholder; replace with actual data fetching
+                const movieData = {
+                    id: movieId,
+                    poster: 'poster.jpg',
+                    title: 'Movie Title'
+                };
+
+                const movieCard = document.createElement('div');
+                movieCard.className = 'movie-card';
+                movieCard.innerHTML = `
+                    <img src="${movieData.poster}" alt="${movieData.title}">
+                    <h3>${movieData.title}</h3>
+                `;
+                movieCard.addEventListener('click', () => {
+                    // Redirect to movie details page
+                    window.location.href = `index.html?movieId=${movieData.id}`;
                 });
-                favMoviesContainer.appendChild(movieDiv);
+                carousel.appendChild(movieCard);
+            });
+
+            // Make the carousel draggable
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            carousel.addEventListener('mousedown', (e) => {
+                isDown = true;
+                carousel.classList.add('active');
+                startX = e.pageX - carousel.offsetLeft;
+                scrollLeft = carousel.scrollLeft;
+            });
+            carousel.addEventListener('mouseleave', () => {
+                isDown = false;
+                carousel.classList.remove('active');
+            });
+            carousel.addEventListener('mouseup', () => {
+                isDown = false;
+                carousel.classList.remove('active');
+            });
+            carousel.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - carousel.offsetLeft;
+                const walk = (x - startX) * 3; // Scroll-fast
+                carousel.scrollLeft = scrollLeft - walk;
             });
         });
     </script>

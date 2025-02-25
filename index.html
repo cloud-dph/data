@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=370, initial-scale=1.0">
-    <title>Movie Shower</title>
+    <title>Movie22Shower</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; background-color: #121212; color: white; }
-        .container { width: 370px; margin: 0 auto; }
+        body { text-align: center; font-family: Arial, sans-serif; background-color: #121212; color: white; margin: 0; }
+        .container { width: 370px; margin: 0 auto; position: relative; }
         .poster { width: 370px; height: 211px; margin-top: 40px; }
-        .logo { width: 182px; height: 70px; margin-top: 265px; }
+        .logo { width: 182px; height: 70px; margin-top: 30px; }
+        .title { margin-top: 30px; font-size: 18px; font-weight: bold; color: white; }
         .fav-icon { font-size: 24px; cursor: pointer; position: absolute; right: 20px; top: 50px; }
-        .btn { display: block; width: 346px; margin: 395px auto 0; padding: 10px; background: #ff4500; border: none; color: white; cursor: pointer; }
-        .genre { margin-top: 365px; font-size: 14px; color: #bbb; }
-        .desc { margin-top: 5px; font-size: 12px; color: #aaa; padding: 0 10px; }
+        .btn { display: block; width: 346px; margin: 30px auto 0; padding: 12px; background: #ff4500; border: none; color: white; font-size: 16px; cursor: pointer; }
+        .genre { margin-top: 20px; font-size: 14px; color: #bbb; }
+        .desc { margin-top: 10px; font-size: 12px; color: #aaa; padding: 0 15px; }
         .nav { margin-top: 20px; }
         .nav a { color: white; text-decoration: none; margin: 0 15px; }
     </style>
@@ -21,10 +22,11 @@
     <div class="container">
         <img id="poster" class="poster" src="" alt="Movie Poster">
         <img id="logo" class="logo" src="" alt="Movie Logo">
-        <div id="fav" class="fav-icon">❤️</div>
+        <div id="title" class="title"></div>
         <button id="watch" class="btn">Watch Now</button>
         <div id="genre" class="genre"></div>
         <div id="desc" class="desc"></div>
+        <div id="fav" class="fav-icon">❤️</div>
         <div class="nav">
             <a href="fav.html">Favorites</a>
             <a href="cw.html">Continue Watching</a>
@@ -42,6 +44,7 @@
 
         document.getElementById('poster').src = poster;
         document.getElementById('logo').src = logo;
+        document.getElementById('title').innerText = title;
         document.getElementById('genre').innerText = genre;
         document.getElementById('desc').innerText = desc;
 

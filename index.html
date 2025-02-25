@@ -2,20 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=370, initial-scale=1.0">
-    <title>Movie22Shower</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Viewer</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; background-color: #121212; color: white; margin: 0; }
-        .container { width: 370px; margin: 0 auto; position: relative; }
-        .poster { width: 370px; height: 211px; margin-top: 40px; }
-        .logo { width: 182px; height: 70px; margin-top: 30px; }
-        .title { margin-top: 30px; font-size: 18px; font-weight: bold; color: white; }
-        .fav-icon { font-size: 24px; cursor: pointer; position: absolute; right: 20px; top: 50px; }
-        .btn { display: block; width: 346px; margin: 30px auto 0; padding: 12px; background: #ff4500; border: none; color: white; font-size: 16px; cursor: pointer; }
-        .genre { margin-top: 20px; font-size: 14px; color: #bbb; }
-        .desc { margin-top: 10px; font-size: 12px; color: #aaa; padding: 0 15px; }
-        .nav { margin-top: 20px; }
-        .nav a { color: white; text-decoration: none; margin: 0 15px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 370px;
+            margin: auto;
+            padding: 20px;
+        }
+        .poster {
+            width: 100%;
+            height: auto;
+            margin-top: 40px;
+        }
+        .logo {
+            width: 182px;
+            height: auto;
+            margin-top: 30px;
+        }
+        .title {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .fav-icon {
+            font-size: 24px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 50px;
+        }
+        .btn {
+            display: block;
+            width: calc(100% - 24px);
+            margin: 30px auto 0;
+            padding: 12px;
+            background: #ff4500;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+        .genre {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #bbb;
+        }
+        .desc {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aaa;
+            padding: 0 15px;
+        }
+        .nav {
+            margin-top: 20px;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .filled {
+            color: red;
+        }
+        .outlined {
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -23,7 +85,7 @@
         <img id="poster" class="poster" src="" alt="Movie Poster">
         <img id="logo" class="logo" src="" alt="Movie Logo">
         <div id="title" class="title"></div>
-        <button id="watch" class="btn">Watch Now</button>
+        <a id="watch" class="btn" href="#" target="_blank">Watch Now</a>
         <div id="genre" class="genre"></div>
         <div id="desc" class="desc"></div>
         <div id="fav" class="fav-icon">❤️</div>
@@ -32,43 +94,60 @@
             <a href="cw.html">Continue Watching</a>
         </div>
     </div>
-    
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const poster = urlParams.get('poster');
-        const logo = urlParams.get('logo');
-        const link = urlParams.get('link');
-        const genre = urlParams.get('genre');
-        const desc = urlParams.get('desc');
-        const title = urlParams.get('title');
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const poster = urlParams.get('poster');
+            const logo = urlParams.get('logo');
+            const title = urlParams.get('title');
+            const genre = urlParams.get('genre');
+            const desc = urlParams.get('desc');
+            const link = urlParams.get('link');
 
-        document.getElementById('poster').src = poster;
-        document.getElementById('logo').src = logo;
-        document.getElementById('title').innerText = title;
-        document.getElementById('genre').innerText = genre;
-        document.getElementById('desc').innerText = desc;
+            if (poster && logo && title && genre && desc && link) {
+                document.getElementById('poster').src = decodeURIComponent(poster);
+                document.getElementById('logo').src = decodeURIComponent(logo);
+                document.getElementById('title').innerText = decodeURIComponent(title);
+                document.getElementById('genre').innerText = decodeURIComponent(genre);
+                document.getElementById('desc').innerText = decodeURIComponent(desc);
+                document.getElementById('watch').href = decodeURIComponent(link);
 
-        document.getElementById('watch').onclick = () => {
-            window.location.href = link;
-            addToContinueWatching({poster, title});
-        };
-        
-        document.getElementById('fav').onclick = () => {
-            addToFavorites({poster, title});
-            alert('Added to Favorites!');
-        };
-        
-        function addToFavorites(movie) {
-            let favs = JSON.parse(localStorage.getItem('favorites')) || [];
-            favs.push(movie);
-            localStorage.setItem('favorites', JSON.stringify(favs));
-        }
+                // Scroll to movie details
+                document.getElementById('poster').scrollIntoView({ behavior: 'smooth' });
 
-        function addToContinueWatching(movie) {
-            let cw = JSON.parse(localStorage.getItem('continueWatching')) || [];
-            cw.push(movie);
-            localStorage.setItem('continueWatching', JSON.stringify(cw));
-        }
+                // Check if the movie is in favorites
+                const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+                const isFavorite = favorites.some(movie => movie.title === title);
+                const favIcon = document.getElementById('fav');
+                favIcon.classList.add(isFavorite ? 'filled' : 'outlined');
+
+                // Toggle favorite status
+                favIcon.addEventListener('click', () => {
+                    if (isFavorite) {
+                        // Remove from favorites
+                        const updatedFavorites = favorites.filter(movie => movie.title !== title);
+                        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+                        favIcon.classList.remove('filled');
+                        favIcon.classList.add('outlined');
+                    } else {
+                        // Add to favorites
+                        const newMovie = { poster, logo, title, genre, desc, link };
+                        favorites.push(newMovie);
+                        localStorage.setItem('favorites', JSON.stringify(favorites));
+                        favIcon.classList.remove('outlined');
+                        favIcon.classList.add('filled');
+                    }
+                });
+
+                // Add to continue watching
+                const continueWatching = JSON.parse(localStorage.getItem('continueWatching')) || [];
+                if (!continueWatching.some(movie => movie.title === title)) {
+                    const newMovie = { poster, logo, title, genre, desc, link };
+                    continueWatching.push(newMovie);
+                    localStorage.setItem('continueWatching', JSON.stringify(continueWatching));
+                }
+            }
+        });
     </script>
 </body>
 </html>

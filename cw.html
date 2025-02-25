@@ -2,25 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=370, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Continue Watching</title>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; background-color: #121212; color: white; }
-        .carousel { display: flex; overflow-x: auto; padding: 20px; gap: 10px; }
-        .movie { flex: 0 0 auto; width: 150px; }
-        .movie img { width: 100%; height: auto; }
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            padding: 20px;
+            gap: 10px;
+        }
+        .movie {
+            flex: 0 0 auto;
+            width: 150px;
+            cursor: pointer;
+        }
+        .movie img {
+            width: 100%;
+            height: auto;
+        }
+        .nav {
+            margin-top: 20px;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
     </style>
 </head>
 <body>
     <h2>Continue Watching</h2>
     <div class="carousel" id="cwMovies"></div>
+    <div class="nav">
+        <a href="index.html">Home</a>
+        <a href="fav.html">Favorites</a>
+    </div>
     <script>
-        function loadContinueWatching() {
-            let cw = JSON.parse(localStorage.getItem('continueWatching')) || [];
-            let cwContainer = document.getElementById('cwMovies');
-            cwContainer.innerHTML = cw.map(movie => `<div class="movie"><img src="${movie.poster}" alt="${movie.title}"></div>`).join('');
-        }
-        window.onload = loadContinueWatching;
+        document.addEventListener('DOMContentLoaded', () => {
+            const cwMoviesContainer = document.getElementById('cwMovies');
+            const continueWatching = JSON.parse(localStorage.getItem('continueWatching')) || [];
+
+            if (continueWatching.length === 0) {
+                cwMoviesContainer.innerHTML = '<p>No movies in your continue watching list.</p>';
+                return;
+            }
+
+            continueWatching.forEach(movie => {
+                const movieDiv = document.createElement('div');
+                movieDiv.classList.add('movie');
+                movieDiv.innerHTML = `<img src="${decodeURIComponent(movie.poster)}" alt="${decodeURIComponent(movie.title)}">`;
+                movieDiv.addEventListener('click', () => {
+                    const queryParams = new URLSearchParams(movie).toString();
+                    window.location.href = `index.html?${queryParams}`;
+                });
+                cwMoviesContainer.appendChild(movieDiv);
+            });
+        });
     </script>
 </body>
 </html>

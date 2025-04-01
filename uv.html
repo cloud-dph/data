@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed Site</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        iframe {
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="embedFrame" src=""></iframe>
+    <iframe id="embeddedSite" src="https://memorable-graphs-002651.framer.app/" style="position: absolute; width: 100vw; height: 100vh; border: none;"></iframe>
+
+    <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const embedUrl = getQueryParam('embed-url');
+        const xOffset = parseInt(getQueryParam('left') || 0) - parseInt(getQueryParam('right') || 0);
+        const yOffset = parseInt(getQueryParam('up') || 0) - parseInt(getQueryParam('down') || 0);
+        
+        if (embedUrl) {
+            const frame = document.getElementById('embedFrame');
+            frame.src = embedUrl;
+            frame.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+        }
+    </script>
+</body>
+</html>

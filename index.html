@@ -1,153 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Showcase</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 100%;
-            max-width: 370px;
-            margin: 0 auto;
-            padding-top: 40px;
-            position: relative;
-        }
-        #movie-poster {
-            width: 370px;
-            height: 211px;
-        }
-        #logo {
-            width: 182px;
-            height: 70px;
-            margin-top: 24px;
-        }
-        #title {
-            margin-top: 24px;
-            font-size: 24px;
-        }
-        #small-text {
-            margin-top: 16px;
-            font-size: 14px;
-            color: gray;
-        }
-        #watch-button {
-            margin-top: 16px;
-            padding: 12px;
-            width: calc(100% - 24px);
-            margin-left: 12px;
-            margin-right: 12px;
-            background-color: blue;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #genre {
-            margin-top: 16px;
-            font-size: 12px;
-            color: darkgray;
-        }
-        #description {
-            margin-top: 16px;
-            font-size: 14px;
-        }
-        #favorite-icon {
-            font-size: 24px;
-            color: gray;
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            cursor: pointer;
-        }
-        #favorite-icon.favorited {
-            color: red;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car Showcase</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      font-family: sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .carousel {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 20px;
+      cursor: grab;
+      scroll-behavior: smooth;
+    }
+
+    .carousel:active {
+      cursor: grabbing;
+    }
+
+    .car-card {
+      min-width: 300px;
+      flex-shrink: 0;
+    }
+
+    .car-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .car-card img:hover {
+      transform: scale(1.05);
+    }
+
+    a {
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <img id="movie-poster" src="" alt="Movie Poster">
-        <img id="logo" src="logo.png" alt="Logo">
-        <h1 id="title"></h1>
-        <p id="small-text"></p>
-        <button id="watch-button">Watch Now</button>
-        <p id="genre"></p>
-        <p id="description"></p>
-        <i id="favorite-icon" class="far fa-heart"></i>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const movieId = urlParams.get('movieId');
 
-            if (movieId) {
-                // Fetch movie data based on movieId
-                // This is a placeholder; replace with actual data fetching
-                const movieData = {
-                    poster: 'poster.jpg',
-                    logo: 'logo.png',
-                    title: 'Movie Title',
-                    smallText: 'Some small text',
-                    genre: 'Action',
-                    description: 'Movie description here.',
-                    watchLink: 'watch.html'
-                };
+  <h1>Best & Boss Cars</h1>
+  <div class="carousel" id="carousel"></div>
 
-                document.getElementById('movie-poster').src = movieData.poster;
-                document.getElementById('logo').src = movieData.logo;
-                document.getElementById('title').textContent = movieData.title;
-                document.getElementById('small-text').textContent = movieData.smallText;
-                document.getElementById('genre').textContent = movieData.genre;
-                document.getElementById('description').textContent = movieData.description;
+  <script type="module">
+    import carData from './cardata.js';
 
-                const watchButton = document.getElementById('watch-button');
-                watchButton.addEventListener('click', () => {
-                    // Add to continue watching
-                    addToContinueWatching(movieId);
-                    // Redirect to watch link
-                    window.location.href = movieData.watchLink;
-                });
+    const carousel = document.getElementById('carousel');
 
-                const favoriteIcon = document.getElementById('favorite-icon');
-                if (isFavorited(movieId)) {
-                    favoriteIcon.classList.add('favorited');
-                }
-                favoriteIcon.addEventListener('click', () => {
-                    toggleFavorite(movieId);
-                    favoriteIcon.classList.toggle('favorited');
-                });
-            }
-        });
+    const filteredCars = carData.filter(car =>
+      car.tags.includes("#best") || car.tags.includes("#boss")
+    );
 
-        function getFavorites() {
-            return JSON.parse(localStorage.getItem('favorites')) || [];
-        }
+    filteredCars.forEach(car => {
+      const card = document.createElement('div');
+      card.className = 'car-card';
+      card.innerHTML = `
+        <a href="${car.url}">
+          <img src="${car.image}" alt="${car.name}" />
+        </a>
+      `;
+      carousel.appendChild(card);
+    });
 
-        function isFavorited(movieId) {
-            const favorites = getFavorites();
-            return favorites.includes(movieId);
-        }
+    // Draggable scroll
+    let isDown = false;
+    let startX;
+    let scrollLeft;
 
-        function toggleFavorite(movieId) {
-            let favorites = getFavorites();
-            if (favorites.includes(movieId)) {
-                favorites = favorites.filter(id => id !== movieId);
-            } else {
-                favorites.push(movieId);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-        }
+    carousel.addEventListener('mousedown', (e) => {
+      isDown = true;
+      startX = e.pageX - carousel.offsetLeft;
+      scrollLeft = carousel.scrollLeft;
+    });
 
-        function addToContinueWatching(movieId) {
-            let continueWatching = JSON.parse(localStorage.getItem('continueWatching')) || [];
-            if (!continueWatching.includes(movieId)) {
-                continueWatching.push(movieId);
-                localStorage.setItem('continueWatching', JSON.stringify(continueWatching));
-            }
-        }
-    </script>
+    carousel.addEventListener('mouseleave', () => {
+      isDown = false;
+    });
+
+    carousel.addEventListener('mouseup', () => {
+      isDown = false;
+    });
+
+    carousel.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - carousel.offsetLeft;
+      const walk = (x - startX) * 2;
+      carousel.scrollLeft = scrollLeft - walk;
+    });
+  </script>
+
 </body>
 </html>

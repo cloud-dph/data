@@ -1,28 +1,19 @@
-const carData = [
+// data.js
+const users = [
   {
-    name: "Lamborghini Aventador",
-    image: "https://example.com/lamborghini.jpg",
-    url: "https://example.com/lamborghini",
-    tags: ["#luxury", "#boss", "#fast"]
+    name: "Alice",
+    mobile: "1234567890",
+    email: "alice@example.com",
+    password: "alice123",
+    dpColor: "#ff5733",
+    pan: "ABCDE1234F"
   },
   {
-    name: "Ferrari F8",
-    image: "https://example.com/ferrari.jpg",
-    url: "https://example.com/ferrari",
-    tags: ["#best", "#sport"]
-  },
-  {
-    name: "Toyota Corolla",
-    image: "https://example.com/toyota.jpg",
-    url: "https://example.com/toyota",
-    tags: ["#reliable", "#economy"]
-  },
-  {
-    name: "Bugatti Chiron",
-    image: "https://example.com/bugatti.jpg",
-    url: "https://example.com/bugatti",
-    tags: ["#boss", "#best"]
+    name: "Bob",
+    mobile: "9876543210",
+    email: "bob@example.com",
+    password: "bob123",
+    dpColor: "#33c1ff",
+    pan: "XYZAB9876C"
   }
 ];
-
-export default carData;

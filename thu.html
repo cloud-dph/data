@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login & Signup with Firebase</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    h2 {
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .toggle {
+      text-align: center;
+      margin-top: 10px;
+      cursor: pointer;
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="formTitle">Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button id="submitBtn">Login</button>
+    <div class="toggle" id="toggleForm">Don't have an account? Sign up</div>
+  </div>
+
+  <script>
+    // ✅ Replace with your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-P5EbBSTvzINV8DebaYN3AfsAO4Qt7k8",
+  authDomain: "demo420-c8c7b.firebaseapp.com",
+  projectId: "demo420-c8c7b",
+  storageBucket: "demo420-c8c7b.firebasestorage.app",
+  messagingSenderId: "76809685599",
+  appId: "1:76809685599:web:a4100117563404e392a9ea",
+  measurementId: "G-LP2KB3BLCW"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Elements
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+    const toggleForm = document.getElementById('toggleForm');
+    const formTitle = document.getElementById('formTitle');
+
+    let isLogin = true;
+
+    toggleForm.addEventListener('click', () => {
+      isLogin = !isLogin;
+      formTitle.textContent = isLogin ? "Login" : "Sign Up";
+      submitBtn.textContent = isLogin ? "Login" : "Sign Up";
+      toggleForm.textContent = isLogin 
+        ? "Don't have an account? Sign up" 
+        : "Already have an account? Login";
+    });
+
+    submitBtn.addEventListener('click', () => {
+      const emailVal = email.value;
+      const passwordVal = password.value;
+
+      if (isLogin) {
+        auth.signInWithEmailAndPassword(emailVal, passwordVal)
+          .then(user => {
+            alert("Login successful!");
+          })
+          .catch(error => {
+            alert(error.message);
+          });
+      } else {
+        auth.createUserWithEmailAndPassword(emailVal, passwordVal)
+          .then(user => {
+            alert("Signup successful!");
+          })
+          .catch(error => {
+            alert(error.message);
+          });
+      }
+    });
+  </script>
+</body>
+</html>

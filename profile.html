@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Profile</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: url('https://img10.hotstar.com/image/upload/f_auto,q_90,w_828/feature/onboarding/29-03-2023-in-onboarding-image.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      backdrop-filter: blur(6px);
+    }
+
+    .profile-container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .profile-container img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #1f80e0;
+      margin-bottom: 20px;
+    }
+
+    .profile-container h2 {
+      margin: 10px 0;
+    }
+
+    .profile-container p {
+      font-size: 16px;
+      color: #ccc;
+    }
+
+    .logout-btn {
+      margin-top: 20px;
+      background-color: #1f80e0;
+      padding: 10px 20px;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container" id="profile">
+    <img src="" id="profileImg" alt="Profile Picture">
+    <h2 id="profileName">Loading...</h2>
+    <p id="profileEmail"></p>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvKhzHTcSmj3Z64oePRGP2TeEd_5A4RVU",
+      authDomain: "authentication-c6c71.firebaseapp.com",
+      projectId: "authentication-c6c71",
+      storageBucket: "authentication-c6c71.appspot.com",
+      messagingSenderId: "707906547881",
+      appId: "1:707906547881:web:55c67cf3e7e867951c39b8",
+      measurementId: "G-ZKY9SXX8N8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      const doc = await db.collection("users").doc(user.uid).get();
+      const data = doc.data();
+
+      document.getElementById("profileImg").src = data.photoURL || "https://i.pravatar.cc/100";
+      document.getElementById("profileName").innerText = data.name || "No Name";
+      document.getElementById("profileEmail").innerText = data.email || user.email;
+    });
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = "index.html";
+      });
+    }
+  </script>
+</body>
+</html>

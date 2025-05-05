@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <style>
+    .carousel img { width: 80px; height: 80px; margin: 10px; cursor: pointer; border-radius: 8px; border: 3px solid transparent; }
+    .carousel img.selected { border-color: blue; }
+  </style>
+</head>
+<body>
+  <h2>Sign Up</h2>
+  <div class="carousel" id="carousel">
+    <img src="https://via.placeholder.com/80/ff0000" onclick="selectImage(this)">
+    <img src="https://via.placeholder.com/80/00ff00" onclick="selectImage(this)">
+    <img src="https://via.placeholder.com/80/0000ff" onclick="selectImage(this)">
+  </div>
+
+  <input id="name" placeholder="Full Name"><br><br>
+  <input id="email" placeholder="Email or Mobile"><br><br>
+  <input type="password" id="password" placeholder="Password"><br><br>
+  <button onclick="signup()">Sign Up</button>
+  <p id="error" style="color:red;"></p>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvKhzHTcSmj3Z64oePRGP2TeEd_5A4RVU",
+      authDomain: "authentication-c6c71.firebaseapp.com",
+      projectId: "authentication-c6c71",
+      storageBucket: "authentication-c6c71.firebasestorage.app",
+      messagingSenderId: "707906547881",
+      appId: "1:707906547881:web:55c67cf3e7e867951c39b8",
+      measurementId: "G-ZKY9SXX8N8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const saved = localStorage.getItem("newIdentifier");
+    if (saved) document.getElementById("email").value = saved;
+
+    let selectedImage = null;
+
+    function selectImage(img) {
+      document.querySelectorAll('.carousel img').forEach(i => i.classList.remove('selected'));
+      img.classList.add('selected');
+      selectedImage = img.src;
+    }
+
+    function signup() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!selectedImage) {
+        document.getElementById("error").innerText = "Select an image from the carousel.";
+        return;
+      }
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(userCred => {
+          return db.collection("users").doc(userCred.user.uid).set({
+            name, email, selectedImage
+          });
+        })
+        .then(() => {
+          window.location.href = "https://abc.xyz";
+        })
+        .catch(err => {
+          document.getElementById("error").innerText = err.message;
+        });
+    }
+  </script>
+</body>
+</html>

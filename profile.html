@@ -1,71 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Profile</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <meta charset="UTF-8" />
+  <title>Your Profile</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: url('https://img10.hotstar.com/image/upload/f_auto,q_90,w_828/feature/onboarding/29-03-2023-in-onboarding-image.jpg') no-repeat center center fixed;
-      background-size: cover;
+      font-family: Arial;
+      background: #111;
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      backdrop-filter: blur(6px);
-    }
-
-    .profile-container {
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 30px;
-      border-radius: 12px;
       text-align: center;
-      width: 90%;
-      max-width: 400px;
+      padding: 50px;
     }
-
-    .profile-container img {
+    img {
       width: 100px;
       height: 100px;
       border-radius: 50%;
-      border: 3px solid #1f80e0;
+      border: 2px solid white;
       margin-bottom: 20px;
     }
-
-    .profile-container h2 {
-      margin: 10px 0;
-    }
-
-    .profile-container p {
-      font-size: 16px;
-      color: #ccc;
-    }
-
-    .logout-btn {
-      margin-top: 20px;
-      background-color: #1f80e0;
+    button {
       padding: 10px 20px;
+      background: linear-gradient(to right, #007bff, #e91e63);
       border: none;
       color: white;
-      font-size: 16px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="profile-container" id="profile">
-    <img src="" id="profileImg" alt="Profile Picture">
-    <h2 id="profileName">Loading...</h2>
-    <p id="profileEmail"></p>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
+  <h1>Your Profile</h1>
+  <img id="dp" src="" />
+  <h2 id="name">Name</h2>
+  <p id="mobile">Mobile</p>
+  <button onclick="window.location.href='edit.html'">Edit</button>
 
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDvKhzHTcSmj3Z64oePRGP2TeEd_5A4RVU",
@@ -80,25 +52,15 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    auth.onAuthStateChanged(async user => {
-      if (!user) {
-        window.location.href = "index.html";
-        return;
-      }
-
-      const doc = await db.collection("users").doc(user.uid).get();
-      const data = doc.data();
-
-      document.getElementById("profileImg").src = data.photoURL || "https://i.pravatar.cc/100";
-      document.getElementById("profileName").innerText = data.name || "No Name";
-      document.getElementById("profileEmail").innerText = data.email || user.email;
-    });
-
-    function logout() {
-      auth.signOut().then(() => {
-        window.location.href = "index.html";
+    auth.onAuthStateChanged(user => {
+      if (!user) return location.href = "index.html";
+      db.collection("users").doc(user.uid).get().then(doc => {
+        const d = doc.data();
+        document.getElementById("dp").src = d.dp;
+        document.getElementById("name").innerText = d.name;
+        document.getElementById("mobile").innerText = d.mobile;
       });
-    }
+    });
   </script>
 </body>
 </html>

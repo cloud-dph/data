@@ -6,7 +6,7 @@ const episodesData = {
       {
         code: "S67 E406",
         date: "27 Oct 2021",
-        image: "https://example.com/yrkkh1.jpg",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/3374/1073374-h-055bd2bf1f67",
         title: "Akshara Returns Home!",
         description: "Three years later, the Goenkas eagerly wait for Akshara to return back home. In the meantime, Aarohi's medical results are out!",
         redirectUrl: "https://example.com/watch/yrkkh-e406"
@@ -14,7 +14,7 @@ const episodesData = {
       {
         code: "S67 E407",
         date: "28 Oct 2021",
-        image: "https://example.com/yrkkh2.jpg",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/3890/1073890-h-343595e9b15f",
         title: "Abhimanyu Takes a Stand",
         description: "Abhimanyu firmly defends his integrity as he refuses to consult the health minister's daughter over a child in distress. Later, Mahima Birla demeans Akshara.",
         redirectUrl: "https://example.com/watch/yrkkh-e407"

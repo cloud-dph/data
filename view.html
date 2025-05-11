@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Show Viewer</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .episode {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .episode img {
+      width: 150px;
+      height: 85px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 15px;
+    }
+    .info {
+      flex: 1;
+    }
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .meta {
+      color: #aaa;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    .desc {
+      color: #ccc;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div id="content"></div>
+
+  <script src="data.js"></script>
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const code = getQueryParam('code');
+    const data = episodesData[code];
+
+    const contentDiv = document.getElementById('content');
+
+    if (!data) {
+      contentDiv.innerHTML = "<p>Show not found.</p>";
+    } else {
+      const header = `<h1>${data.title}</h1><h2>${data.season}</h2>`;
+      const episodesHTML = data.episodes.map(ep => `
+        <div class="episode">
+          <img src="${ep.image}" alt="${ep.title}" />
+          <div class="info">
+            <div class="title">${ep.title}</div>
+            <div class="meta">${ep.code} • ${ep.date}</div>
+            <div class="desc">${ep.description}</div>
+          </div>
+        </div>
+      `).join('');
+      contentDiv.innerHTML = header + episodesHTML;
+    }
+  </script>
+</body>
+</html>

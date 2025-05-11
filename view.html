@@ -99,7 +99,7 @@
   <div class="tabs" id="season-tabs"></div>
   <div id="episodes-container"></div>
 
-  <script src="star-plus.js"></script>
+  <script src="data.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
@@ -110,13 +110,11 @@
     } else {
       document.getElementById("show-title").textContent = show.title;
 
-      // Tabs
-      const tabContainer = document.getElementById("season-tabs");
-      tabContainer.innerHTML = show.seasons.map(season => `
-        <div class="tab ${season === show.season ? 'active' : ''}">${season}</div>
-      `).join('');
+      // Static single season
+      document.getElementById("season-tabs").innerHTML = `
+        <div class="tab active">${show.season}</div>
+      `;
 
-      // Episodes
       const epHTML = show.episodes.map(ep => `
         <a class="episode" href="${ep.redirectUrl}" target="_blank">
           <img src="${ep.image}" alt="${ep.title}" />

@@ -51,6 +51,63 @@ const episodesData = {
         description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
         redirectUrl: "https://example.com/watch/yrkkh-e408"
       },
+      {
+        code: "S67 E408",
+        date: "29 Oct 2021",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/5821/1075821-h-5e9dc6bb4901",
+        title: "Akshu sings for Abhi",
+        description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
+        redirectUrl: "https://example.com/watch/yrkkh-e408"
+      },
+      {
+        code: "S67 E408",
+        date: "29 Oct 2021",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/6190/1076190-h-63e9d5f5f8dd",
+        title: "Abhimanyu Admires Akshu",
+        description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
+        redirectUrl: "https://example.com/watch/yrkkh-e408"
+      },
+      {
+        code: "S67 E408",
+        date: "29 Oct 2021",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/6504/1076504-h-b2871a959459",
+        title: "Abhimanyu save Loves Akshu",
+        description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
+        redirectUrl: "https://example.com/watch/yrkkh-e408"
+      },
+      {
+        code: "S67 E408",
+        date: "29 Oct 2021",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/6893/1076893-h-7a263b30632f",
+        title: "Akshu is Anxious",
+        description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
+        redirectUrl: "https://example.com/watch/yrkkh-e408"
+      },
+      {
+        code: "S67 E408",
+        date: "29 Oct 2021",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/7399/1077399-h-d8651e5ca9e2",
+        title: "Arohi bonds with Akshu",
+        description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
+        redirectUrl: "https://example.com/watch/yrkkh-e408"
+      },
+      {
+        code: "S67 E408",
+        date: "29 Oct 2021",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/7859/1077859-h-4f322d12418f",
+        title: "Abhimanyu confes his Love to Akshu?",
+        description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
+        redirectUrl: "https://example.com/watch/yrkkh-e408"
+      },
+      {
+        code: "S67 E408",
+        date: "29 Oct 2021",
+        image: "https://img10.hotstar.com/image/upload/f_auto/sources/r1/cms/prod/8263/1078263-h-8f95c807eed7",
+        title: "Good News for Arohi",
+        description: "Abhimanyu gets into the wrong room in the hospital and comes across Akshara having a panic attack. Later, Akshara and Kairav have an emotional conversation.",
+        redirectUrl: "https://example.com/watch/yrkkh-e408"
+      },
+      
     ]
   },
   "2212": {

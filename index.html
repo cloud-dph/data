@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Multiple Images</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    .upload-block { margin-bottom: 20px; }
+    input, button { padding: 10px; width: 100%; font-size: 16px; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Upload 7 Image URLs</h2>
+  <div id="uploads"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvKhzHTcSmj3Z64oePRGP2TeEd_5A4RVU",
+      authDomain: "authentication-c6c71.firebaseapp.com",
+      projectId: "authentication-c6c71",
+      storageBucket: "authentication-c6c71.appspot.com",
+      messagingSenderId: "707906547881",
+      appId: "1:707906547881:web:55c67cf3e7e867951c39b8",
+      measurementId: "G-ZKY9SXX8N8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const uploadsDiv = document.getElementById('uploads');
+
+    for (let i = 1; i <= 7; i++) {
+      const block = document.createElement('div');
+      block.className = 'upload-block';
+      block.innerHTML = `
+        <label>Image Slot ${i}:</label>
+        <input type="text" id="url${i}" placeholder="Enter image URL for slot ${i}">
+        <button onclick="uploadImage(${i})">Upload to Slot ${i}</button>
+      `;
+      uploadsDiv.appendChild(block);
+    }
+
+    function uploadImage(slot) {
+      const url = document.getElementById(`url${slot}`).value.trim();
+      if (!url) {
+        alert(`Please enter a URL for image ${slot}`);
+        return;
+      }
+
+      db.collection("images").doc(`image${slot}`).set({ url })
+        .then(() => alert(`Image ${slot} uploaded successfully.`))
+        .catch(err => {
+          console.error("Upload error:", err);
+          alert("Upload failed.");
+        });
+    }
+  </script>
+</body>
+</html>

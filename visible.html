@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head><title>View Image</title></head>
+<body>
+  <h2>Selected Image Display</h2>
+  <div id="imageDisplay"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvKhzHTcSmj3Z64oePRGP2TeEd_5A4RVU",
+      authDomain: "authentication-c6c71.firebaseapp.com",
+      projectId: "authentication-c6c71",
+      storageBucket: "authentication-c6c71.appspot.com",
+      messagingSenderId: "707906547881",
+      appId: "1:707906547881:web:55c67cf3e7e867951c39b8",
+      measurementId: "G-ZKY9SXX8N8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    async function loadImage() {
+      const index = parseInt(getQueryParam("img"), 10); // e.g., ?img=2
+
+      if (isNaN(index) || index < 0 || index > 6) {
+        document.getElementById("imageDisplay").innerText = "Invalid or missing image index (?img=0 to 6)";
+        return;
+      }
+
+      const docRef = doc(db, "images", "latestSet");
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        document.getElementById("imageDisplay").innerText = "No images found.";
+        return;
+      }
+
+      const data = docSnap.data().images;
+
+      if (index >= data.length) {
+        document.getElementById("imageDisplay").innerText = "Image index out of range.";
+        return;
+      }
+
+      const item = data[index];
+
+      document.getElementById("imageDisplay").innerHTML = `
+        <img src="${item.logoUrl}" alt="Logo" style="height: 50px;" />
+        <h3>${item.title}</h3>
+        <p>${item.genre}</p>
+        <img src="${item.imageUrl}" alt="Image" style="width: 300px;" />
+      `;
+    }
+
+    loadImage();
+  </script>
+</body>
+</html>

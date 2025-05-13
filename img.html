@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>View Image</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    img {
+      width: 370px;
+      height: 400px;
+      object-fit: cover;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="imageContainer"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvKhzHTcSmj3Z64oePRGP2TeEd_5A4RVU",
+      authDomain: "authentication-c6c71.firebaseapp.com",
+      projectId: "authentication-c6c71",
+      storageBucket: "authentication-c6c71.appspot.com",
+      messagingSenderId: "707906547881",
+      appId: "1:707906547881:web:55c67cf3e7e867951c39b8",
+      measurementId: "G-ZKY9SXX8N8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Get slot number from URL (e.g. img.html?=3)
+    const params = new URLSearchParams(window.location.search);
+    const slot = params.get("") || "1"; // default to 1
+
+    const imageRef = db.collection("images").doc(`image${slot}`);
+    const container = document.getElementById("imageContainer");
+
+    imageRef.onSnapshot(doc => {
+      if (doc.exists && doc.data().url) {
+        container.innerHTML = `<img src="${doc.data().url}" alt="Image ${slot}">`;
+      } else {
+        container.innerHTML = "";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!-- movie.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Movie</title>
+  <style>
+    body { font-family: Arial; max-width: 500px; margin: 2rem auto; }
+    input, textarea { width: 100%; margin: 10px 0; padding: 8px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Upload Movie Data</h2>
+  <form id="movieForm">
+    <input type="text" id="code" placeholder="Unique Code (e.g. 123)" required />
+    <input type="text" id="imageUrl" placeholder="Image URL" />
+    <input type="text" id="logoUrl" placeholder="Logo URL" />
+    <input type="text" id="genres" placeholder="Genres (comma-separated)" />
+    <input type="text" id="redirectUrl" placeholder="Redirect URL" />
+    <textarea id="description" placeholder="Description"></textarea>
+    <input type="text" id="tags" placeholder="Tags (comma-separated)" />
+    <input type="text" id="posterUrl" placeholder="Poster URL" />
+    <button type="submit">Save</button>
+  </form>
+
+  <!-- Firebase Setup -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBROgYUR-2rakUxHbl90JlynP_X3f0GxIM",
+      authDomain: "diseny-plus-hotstar-database.firebaseapp.com",
+      projectId: "diseny-plus-hotstar-database",
+      storageBucket: "diseny-plus-hotstar-database.firebasestorage.app",
+      messagingSenderId: "582861150339",
+      appId: "1:582861150339:web:0d2b69a2ae914342b723b6",
+      measurementId: "G-HX223WNVKE"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.getElementById('movieForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const code = document.getElementById('code').value.trim();
+      const data = {
+        imageUrl: document.getElementById('imageUrl').value,
+        logoUrl: document.getElementById('logoUrl').value,
+        genres: document.getElementById('genres').value,
+        redirectUrl: document.getElementById('redirectUrl').value,
+        description: document.getElementById('description').value,
+        tags: document.getElementById('tags').value,
+        posterUrl: document.getElementById('posterUrl').value
+      };
+
+      db.collection("movies").doc(code).set(data)
+        .then(() => alert("Movie data saved!"))
+        .catch((error) => alert("Error saving data: " + error));
+    });
+  </script>
+</body>
+</html>

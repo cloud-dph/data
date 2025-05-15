@@ -14,6 +14,7 @@
   <h2>Upload Movie Data</h2>
   <form id="movieForm">
     <input type="text" id="code" placeholder="Unique Code (e.g. 123)" required />
+    <input type="text" id="Name" placeholder="Movie Name (e.g. Name of Movie)" required />
     <input type="text" id="imageUrl" placeholder="Image URL" />
     <input type="text" id="logoUrl" placeholder="Logo URL" />
     <input type="text" id="genres" placeholder="Genres (comma-separated)" />
@@ -46,6 +47,7 @@
       const code = document.getElementById('code').value.trim();
       const data = {
         imageUrl: document.getElementById('imageUrl').value,
+        imageUrl: document.getElementById('Movie Name').value,
         logoUrl: document.getElementById('logoUrl').value,
         genres: document.getElementById('genres').value,
         redirectUrl: document.getElementById('redirectUrl').value,

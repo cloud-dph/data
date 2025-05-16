@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Movie Preview</title>
   <style>
@@ -28,7 +28,6 @@
     .title {
       font-size: 28px;
       font-weight: bold;
-      margin-top: 10px;
       font-family: 'Georgia', serif;
     }
 
@@ -44,7 +43,7 @@
       margin-bottom: 20px;
     }
 
-    .watch-button {
+    .watch-button, .continue-btn, .watchlist-btn {
       background-color: #e5e7eb;
       color: #000;
       border: none;
@@ -53,15 +52,11 @@
       font-weight: bold;
       border-radius: 10px;
       cursor: pointer;
-      margin: 15px auto;
       width: 90%;
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-
-    .watch-button:hover {
-      background-color: #d4d4d8;
+      margin: 10px auto;
     }
 
     .section-title {
@@ -94,27 +89,6 @@
       width: 32px;
       height: 32px;
     }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: #111;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
-      border-top: 1px solid #333;
-    }
-
-    .bottom-nav div {
-      text-align: center;
-      font-size: 12px;
-      color: #999;
-    }
-
-    .bottom-nav div:hover {
-      color: white;
-    }
   </style>
 
   <!-- Firebase SDK -->
@@ -131,11 +105,11 @@
     <div class="meta">2025 • <span id="rating">U</span> • 1 Season • Hindi</div>
 
     <button class="watch-button" id="watchBtn">▶ Watch Latest Season S1 E1</button>
+    <button class="continue-btn" id="continueBtn">🔁 Continue Watching</button>
+    <button class="watchlist-btn" id="watchlistBtn">⭐ Add to Watchlist</button>
 
     <div class="section-title">Specials</div>
-    <p class="description" id="description">
-      Watch the life of Lord Shri Ram unfold through 9 stories narrated by Shri Amitabh Bachchan.
-    </p>
+    <p class="description" id="description">Loading description...</p>
 
     <div class="reaction-bar">
       <div class="reaction"><img src="https://img.icons8.com/emoji/48/sad-but-relieved-face.png"/><br>Not for me</div>
@@ -144,16 +118,7 @@
     </div>
   </div>
 
-  <div class="bottom-nav">
-    <div>🏠<br>Home</div>
-    <div>🔍<br>Search</div>
-    <div>🎬<br>Sparks</div>
-    <div>⬇️<br>Downloads</div>
-    <div>👤<br>My Space</div>
-  </div>
-
   <script>
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBROgYUR-2rakUxHbl90JlynP_X3f0GxIM",
       authDomain: "diseny-plus-hotstar-database.firebaseapp.com",
@@ -164,11 +129,9 @@
       measurementId: "G-HX223WNVKE"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Get code from URL
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
@@ -179,11 +142,29 @@
           document.getElementById("banner").style.backgroundImage = `url(${data.posterUrl})`;
           document.getElementById("name").textContent = data.Name || "Untitled";
           document.getElementById("description").textContent = data.description || "No description.";
+
           document.getElementById("watchBtn").onclick = () => {
             if (data.redirectUrl) {
+              localStorage.setItem("continueWatching", code);
               window.location.href = data.redirectUrl;
             } else {
               alert("No redirect URL available.");
+            }
+          };
+
+          document.getElementById("continueBtn").onclick = () => {
+            localStorage.setItem("continueWatching", code);
+            window.location.href = "cw.html";
+          };
+
+          document.getElementById("watchlistBtn").onclick = () => {
+            let list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+            if (!list.includes(code)) {
+              list.push(code);
+              localStorage.setItem("watchlist", JSON.stringify(list));
+              alert("Added to Watchlist!");
+            } else {
+              alert("Already in Watchlist.");
             }
           };
         } else {

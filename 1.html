@@ -7,67 +7,113 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
       background-color: #000;
       color: #fff;
+      font-family: 'Segoe UI', sans-serif;
     }
 
-    #movie-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #banner {
+    .banner {
       width: 100%;
       height: 250px;
-      object-fit: cover;
+      background-size: cover;
+      background-position: center;
       position: relative;
     }
 
-    .overlay {
-      position: absolute;
-      top: 180px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-    }
-
-    #logo {
-      height: 80px;
-    }
-
     .content {
-      padding: 16px;
-      width: 100%;
-      box-sizing: border-box;
+      padding: 20px;
+      text-align: center;
     }
 
-    #name {
-      font-size: 24px;
-      margin-bottom: 8px;
+    .title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 10px;
+      font-family: 'Georgia', serif;
     }
 
-    #year {
-      color: #ccc;
-      margin-bottom: 16px;
+    .subtitle {
+      color: #00e5ff;
+      font-weight: 500;
+      margin: 5px 0;
     }
 
-    button {
-      padding: 12px 20px;
-      background-color: #e50914;
-      border: none;
-      color: white;
-      font-size: 16px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    p {
-      margin: 8px 0;
+    .meta {
       font-size: 14px;
-      line-height: 1.5;
+      color: #bbb;
+      margin-bottom: 20px;
+    }
+
+    .watch-button {
+      background-color: #e5e7eb;
+      color: #000;
+      border: none;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 15px auto;
+      width: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .watch-button:hover {
+      background-color: #d4d4d8;
+    }
+
+    .section-title {
+      font-size: 18px;
+      text-align: left;
+      margin: 25px 0 10px 5%;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #ccc;
+      text-align: left;
+      margin: 0 5%;
+      line-height: 1.6;
+    }
+
+    .reaction-bar {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 25px 0;
+    }
+
+    .reaction {
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .reaction img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #111;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #333;
+    }
+
+    .bottom-nav div {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .bottom-nav div:hover {
+      color: white;
     }
   </style>
 
@@ -77,19 +123,33 @@
 </head>
 <body>
 
-  <div id="movie-container">
-    <img id="banner" src="" alt="Movie Banner" />
-    <div class="overlay">
-      <img id="logo" src="" alt="Logo" />
+  <div class="banner" id="banner"></div>
+
+  <div class="content">
+    <div class="title" id="name">राम Katha</div>
+    <div class="subtitle">New Release</div>
+    <div class="meta">2025 • <span id="rating">U</span> • 1 Season • Hindi</div>
+
+    <button class="watch-button" id="watchBtn">▶ Watch Latest Season S1 E1</button>
+
+    <div class="section-title">Specials</div>
+    <p class="description" id="description">
+      Watch the life of Lord Shri Ram unfold through 9 stories narrated by Shri Amitabh Bachchan.
+    </p>
+
+    <div class="reaction-bar">
+      <div class="reaction"><img src="https://img.icons8.com/emoji/48/sad-but-relieved-face.png"/><br>Not for me</div>
+      <div class="reaction"><img src="https://img.icons8.com/emoji/48/thumbs-up.png"/><br>Like</div>
+      <div class="reaction"><img src="https://img.icons8.com/emoji/48/red-heart.png"/><br>Love</div>
     </div>
-    <div class="content">
-      <h1 id="name">Movie Title</h1>
-      <p id="year">2025 • U • Hindi</p>
-      <button id="watchBtn">▶ Watch Now</button>
-      <p id="description">Movie description goes here...</p>
-      <p><strong>Genres:</strong> <span id="genres"></span></p>
-      <p><strong>Tags:</strong> <span id="tags"></span></p>
-    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div>🏠<br>Home</div>
+    <div>🔍<br>Search</div>
+    <div>🎬<br>Sparks</div>
+    <div>⬇️<br>Downloads</div>
+    <div>👤<br>My Space</div>
   </div>
 
   <script>
@@ -116,13 +176,9 @@
       db.collection("movies").doc(code).get().then((doc) => {
         if (doc.exists) {
           const data = doc.data();
-          document.getElementById("banner").src = data.imageUrl || "";
-          document.getElementById("logo").src = data.logoUrl || "";
+          document.getElementById("banner").style.backgroundImage = `url(${data.posterUrl})`;
           document.getElementById("name").textContent = data.Name || "Untitled";
-          document.getElementById("genres").textContent = data.genres || "";
-          document.getElementById("tags").textContent = data.tags || "";
-          document.getElementById("description").textContent = data.description || "";
-
+          document.getElementById("description").textContent = data.description || "No description.";
           document.getElementById("watchBtn").onclick = () => {
             if (data.redirectUrl) {
               window.location.href = data.redirectUrl;

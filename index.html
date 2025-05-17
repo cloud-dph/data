@@ -6,63 +6,142 @@
   <title>Movie Preview</title>
   <style>
     body {
+      background-color: #0f0f0f;
+      color: white;
+      font-family: sans-serif;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #fff;
-      text-align: center;
+      padding: 0;
     }
 
-    .container {
-      padding: 20px;
+    .poster-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .content {
+      padding: 16px;
     }
 
     .logo {
-      width: 200px;
-      margin-top: 20px;
+      width: 180px;
+      margin-top: 16px;
     }
 
-    .poster {
-      width: 100%;
-      max-width: 600px;
-      border-radius: 10px;
+    .details {
+      font-size: 14px;
+      color: gray;
+      margin: 8px 0;
     }
 
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #f90;
+    .watch-btn {
+      background-color: #e0e0e0;
+      color: black;
       border: none;
-      border-radius: 5px;
+      padding: 12px 24px;
+      font-weight: bold;
+      margin: 16px 0;
+      display: inline-block;
+      border-radius: 10px;
+      cursor: pointer;
     }
 
-    a.watchlist-link {
-      color: #f90;
-      display: block;
-      margin-top: 20px;
-      font-size: 16px;
+    .genres {
+      margin: 12px 0;
+    }
+
+    .genres span {
+      margin-right: 12px;
+      font-weight: bold;
+    }
+
+    .desc {
+      margin: 16px 0;
+      line-height: 1.5;
+      color: #ccc;
+    }
+
+    .actions {
+      display: flex;
+      gap: 24px;
+      margin: 20px 0;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .actions div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .actions i {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .more-like-this {
+      margin: 20px 16px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    /* Icons - you can use Font Awesome or Unicode placeholders */
+    .fa {
+      font-family: FontAwesome;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img id="poster" class="poster" />
-    <img id="logo" class="logo" />
-    <h1 id="name"></h1>
-    <p id="description"></p>
-    <p><strong>Genre:</strong> <span id="genres"></span></p>
-    <button onclick="redirectToShow()">▶️ Watch Now</button>
-    <button onclick="addToWatchlist()">➕ Watchlist</button>
-    <a href="watchlist.html" class="watchlist-link">📺 View My Watchlist</a>
+
+  <div class="poster-container">
+    <img id="poster" src="" alt="Poster" />
   </div>
 
+  <div class="content">
+    <img id="logo" class="logo" src="" alt="Logo" />
+
+    <div class="details" id="meta">2021 • U/A 13+ • 2h 8m • Hindi</div>
+
+    <button class="watch-btn" id="watchNowBtn">▶ Watch Now</button>
+
+    <div class="genres" id="genres">
+      <!-- Genres will appear here -->
+    </div>
+
+    <div class="desc" id="desc">
+      <!-- Description goes here -->
+    </div>
+
+    <div class="actions">
+      <div onclick="addToWatchlist()">
+        <i class="fa">&#xf02e;</i>
+        Watchlist
+      </div>
+      <div onclick="navigator.share({url: window.location.href})">
+        <i class="fa">&#xf1e0;</i>
+        Share
+      </div>
+      <div>
+        <i class="fa">&#xf019;</i>
+        Download
+      </div>
+      <div>
+        <i class="fa">&#xf005;</i>
+        Rate
+      </div>
+    </div>
+  </div>
+
+  <div class="more-like-this">More Like This</div>
+
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
   <script>
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBROgYUR-2rakUxHbl90JlynP_X3f0GxIM",
       authDomain: "diseny-plus-hotstar-database.firebaseapp.com",
@@ -72,50 +151,41 @@
       appId: "1:582861150339:web:0d2b69a2ae914342b723b6",
       measurementId: "G-HX223WNVKE"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Fetch data from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieName = urlParams.get("name");
+    const params = new URLSearchParams(window.location.search);
+    const movieId = params.get('id');
 
-    let movieData = null;
-
-    if (movieName) {
-      db.collection("movies").doc(movieName).get().then(doc => {
+    if (movieId) {
+      db.collection("movies").doc(movieId).get().then(doc => {
         if (doc.exists) {
-          movieData = doc.data();
-          document.getElementById("name").textContent = movieData.Name;
-          document.getElementById("description").textContent = movieData.description;
-          document.getElementById("genres").textContent = movieData.genres;
-          document.getElementById("poster").src = movieData.posterUrl;
-          document.getElementById("logo").src = movieData.logoUrl;
+          const data = doc.data();
+          document.getElementById("logo").src = data.logoUrl;
+          document.getElementById("poster").src = data.posterUrl;
+          document.getElementById("desc").textContent = data.description;
+          document.getElementById("genres").innerHTML = data.genres.split(',').map(g => `<span>${g.trim()}</span>`).join('');
+          document.getElementById("watchNowBtn").onclick = () => {
+            window.location.href = data.redirectUrl;
+          };
         } else {
-          alert("Movie not found in Firebase.");
+          alert("Movie not found!");
         }
-      });
-    }
-
-    function redirectToShow() {
-      if (movieData?.redirectUrl) {
-        window.location.href = movieData.redirectUrl;
-      }
+      }).catch(console.error);
+    } else {
+      alert("No movie ID provided in URL.");
     }
 
     function addToWatchlist() {
-      if (!movieData) return;
-
-      let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
-      const exists = watchlist.find(m => m.Name === movieData.Name);
-
-      if (exists) {
-        alert("Already in watchlist.");
-        return;
+      let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+      if (!watchlist.includes(movieId)) {
+        watchlist.push(movieId);
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+        alert("Added to watchlist");
+      } else {
+        alert("Already in watchlist");
       }
-
-      watchlist.push(movieData);
-      localStorage.setItem("watchlist", JSON.stringify(watchlist));
-      alert("Added to watchlist!");
     }
   </script>
 </body>

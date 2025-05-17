@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Movie Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     body {
       background-color: #0f0f0f;
       color: white;
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
@@ -17,6 +18,7 @@
       width: 100%;
       height: auto;
       display: block;
+      border-radius: 5px;
     }
 
     .content {
@@ -63,7 +65,7 @@
 
     .actions {
       display: flex;
-      gap: 24px;
+      gap: 28px;
       margin: 20px 0;
       font-size: 14px;
       text-align: center;
@@ -87,11 +89,6 @@
       font-weight: bold;
       font-size: 18px;
     }
-
-    /* Icons - you can use Font Awesome or Unicode placeholders */
-    .fa {
-      font-family: FontAwesome;
-    }
   </style>
 </head>
 <body>
@@ -107,29 +104,25 @@
 
     <button class="watch-btn" id="watchNowBtn">▶ Watch Now</button>
 
-    <div class="genres" id="genres">
-      <!-- Genres will appear here -->
-    </div>
+    <div class="genres" id="genres"></div>
 
-    <div class="desc" id="desc">
-      <!-- Description goes here -->
-    </div>
+    <div class="desc" id="desc"></div>
 
     <div class="actions">
       <div onclick="addToWatchlist()">
-        <i class="fa">&#xf02e;</i>
+        <i class="fa-solid fa-plus"></i>
         Watchlist
       </div>
       <div onclick="navigator.share({url: window.location.href})">
-        <i class="fa">&#xf1e0;</i>
+        <i class="fa-solid fa-share-nodes"></i>
         Share
       </div>
       <div>
-        <i class="fa">&#xf019;</i>
+        <i class="fa-solid fa-download"></i>
         Download
       </div>
       <div>
-        <i class="fa">&#xf005;</i>
+        <i class="fa-solid fa-star"></i>
         Rate
       </div>
     </div>

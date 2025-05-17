@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Watchlist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .movie-card {
+      background-color: #1c1c1c;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: white;
+      transition: transform 0.2s;
+    }
+
+    .movie-card:hover {
+      transform: scale(1.01);
+    }
+
+    .poster {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .card-content {
+      padding: 12px;
+    }
+
+    .logo {
+      width: 120px;
+      margin-bottom: 10px;
+    }
+
+    .movie-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .no-movies {
+      text-align: center;
+      color: #aaa;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📺 My Watchlist</h1>
+  <div id="watchlistContainer"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBROgYUR-2rakUxHbl90JlynP_X3f0GxIM",
+      authDomain: "diseny-plus-hotstar-database.firebaseapp.com",
+      projectId: "diseny-plus-hotstar-database",
+      storageBucket: "diseny-plus-hotstar-database.firebasestorage.app",
+      messagingSenderId: "582861150339",
+      appId: "1:582861150339:web:0d2b69a2ae914342b723b6",
+      measurementId: "G-HX223WNVKE"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const watchlistContainer = document.getElementById("watchlistContainer");
+    const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+
+    if (watchlist.length === 0) {
+      watchlistContainer.innerHTML = `<div class="no-movies">Your watchlist is empty.</div>`;
+    } else {
+      watchlist.forEach(id => {
+        db.collection("movies").doc(id).get().then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            const card = document.createElement("a");
+            card.className = "movie-card";
+            card.href = `index.html?id=${id}`;
+            card.innerHTML = `
+              <img class="poster" src="${data.posterUrl}" alt="Poster">
+              <div class="card-content">
+                <img class="logo" src="${data.logoUrl}" alt="Logo">
+                <div class="movie-name">${data.Name}</div>
+              </div>
+            `;
+            watchlistContainer.appendChild(card);
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Movie Preview</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
       background-color: #0f0f0f;
@@ -14,121 +14,124 @@
       padding: 0;
     }
 
-    .poster-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 5px;
-    }
-
-    .content {
+    .container {
       padding: 16px;
     }
 
-    .logo {
+    .poster-img {
+      width: 100%;
+      border-radius: 5px;
+      display: block;
+    }
+
+    .logo-img {
       width: 180px;
       margin-top: 16px;
     }
 
-    .details {
-      font-size: 14px;
-      color: gray;
-      margin: 8px 0;
+    .movie-info {
+      margin-top: 16px;
     }
 
-    .watch-btn {
-      background-color: #e0e0e0;
-      color: black;
-      border: none;
-      padding: 12px 24px;
-      font-weight: bold;
-      margin: 16px 0;
-      display: inline-block;
-      border-radius: 10px;
-      cursor: pointer;
+    .movie-info h1 {
+      margin: 0;
+      font-size: 28px;
     }
 
-    .genres {
-      margin: 12px 0;
-    }
-
-    .genres span {
-      margin-right: 12px;
-      font-weight: bold;
-    }
-
-    .desc {
-      margin: 16px 0;
-      line-height: 1.5;
+    .meta {
       color: #ccc;
-    }
-
-    .actions {
-      display: flex;
-      gap: 28px;
-      margin: 20px 0;
       font-size: 14px;
-      text-align: center;
+      margin: 10px 0;
     }
 
-    .actions div {
+    .description {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .tags {
+      margin: 10px 0;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .button-bar {
       display: flex;
-      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: #1f80e0;
+      padding: 10px 20px;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      display: flex;
       align-items: center;
-      cursor: pointer;
-      color: #ccc;
-    }
-
-    .actions i {
-      font-size: 20px;
-      margin-bottom: 6px;
+      gap: 8px;
+      font-weight: bold;
     }
 
     .more-like-this {
-      margin: 20px 16px;
-      font-weight: bold;
-      font-size: 18px;
+      padding: 16px;
     }
+
+    .card-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .movie-card {
+      background-color: #1c1c1c;
+      border-radius: 8px;
+      text-decoration: none;
+      color: white;
+      overflow: hidden;
+      transition: transform 0.2s;
+      max-width: 200px;
+    }
+
+    .movie-card:hover {
+      transform: scale(1.02);
+    }
+
+    .movie-card img {
+      width: 100%;
+      border-radius: 5px;
+      display: block;
+    }
+
+    .movie-card .logo {
+      width: 100px;
+      margin: 10px auto 5px;
+      display: block;
+    }
+
+    .movie-card .title {
+      text-align: center;
+      padding: 0 8px 10px;
+    }
+
+    .watchlist-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
+  <div class="container" id="moviePreview"></div>
 
-  <div class="poster-container">
-    <img id="poster" src="" alt="Poster" />
+  <div class="more-like-this">
+    <h2>More Like This</h2>
+    <div id="moreLikeThisContainer" class="card-grid"></div>
   </div>
-
-  <div class="content">
-    <img id="logo" class="logo" src="" alt="Logo" />
-
-    <div class="details" id="meta">2021 • U/A 13+ • 2h 8m • Hindi</div>
-
-    <button class="watch-btn" id="watchNowBtn">▶ Watch Now</button>
-
-    <div class="genres" id="genres"></div>
-
-    <div class="desc" id="desc"></div>
-
-    <div class="actions">
-      <div onclick="addToWatchlist()">
-        <i class="fa-solid fa-plus"></i>
-        Watchlist
-      </div>
-      <div onclick="navigator.share({url: window.location.href})">
-        <i class="fa-solid fa-share-nodes"></i>
-        Share
-      </div>
-      <div>
-        <i class="fa-solid fa-download"></i>
-        Download
-      </div>
-      <div>
-        <i class="fa-solid fa-star"></i>
-        Rate
-      </div>
-    </div>
-  </div>
-
-  <div class="more-like-this">More Like This</div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -149,35 +152,67 @@
     const db = firebase.firestore();
 
     const params = new URLSearchParams(window.location.search);
-    const movieId = params.get('id');
+    const movieId = params.get("id");
+    const previewContainer = document.getElementById("moviePreview");
+    const moreLikeThisContainer = document.getElementById("moreLikeThisContainer");
+
+    let currentGenre = "";
 
     if (movieId) {
       db.collection("movies").doc(movieId).get().then(doc => {
         if (doc.exists) {
           const data = doc.data();
-          document.getElementById("logo").src = data.logoUrl;
-          document.getElementById("poster").src = data.posterUrl;
-          document.getElementById("desc").textContent = data.description;
-          document.getElementById("genres").innerHTML = data.genres.split(',').map(g => `<span>${g.trim()}</span>`).join('');
-          document.getElementById("watchNowBtn").onclick = () => {
-            window.location.href = data.redirectUrl;
-          };
-        } else {
-          alert("Movie not found!");
+          currentGenre = data.genres?.trim();
+          renderMovie(data);
+          fetchMoreLikeThis(currentGenre, movieId);
         }
-      }).catch(console.error);
-    } else {
-      alert("No movie ID provided in URL.");
+      });
     }
 
-    function addToWatchlist() {
-      let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-      if (!watchlist.includes(movieId)) {
-        watchlist.push(movieId);
-        localStorage.setItem("watchlist", JSON.stringify(watchlist));
-        alert("Added to watchlist");
+    function renderMovie(data) {
+      previewContainer.innerHTML = `
+        <img src="${data.imageUrl}" class="poster-img" alt="Movie Poster">
+        <img src="${data.logoUrl}" class="logo-img" alt="Movie Logo">
+        <div class="movie-info">
+          <h1>${data.Name}</h1>
+          <div class="meta">U/A 13+ • 2h 8m • Hindi</div>
+          <div class="tags">${data.genres}</div>
+          <div class="description">${data.description}</div>
+          <div class="button-bar">
+            <a href="${data.redirectUrl}" class="btn"><i class="fas fa-play"></i> Watch Now</a>
+            <button class="watchlist-btn" onclick="addToWatchlist('${movieId}')"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+      `;
+    }
+
+    function fetchMoreLikeThis(genre, excludeId) {
+      db.collection("movies").get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.genres?.trim() === genre && doc.id !== excludeId) {
+            const card = document.createElement("a");
+            card.className = "movie-card";
+            card.href = `index.html?id=${doc.id}`;
+            card.innerHTML = `
+              <img src="${data.posterUrl}" alt="Poster">
+              <img src="${data.logoUrl}" class="logo" alt="Logo">
+              <div class="title">${data.Name}</div>
+            `;
+            moreLikeThisContainer.appendChild(card);
+          }
+        });
+      });
+    }
+
+    function addToWatchlist(id) {
+      const current = JSON.parse(localStorage.getItem("watchlist") || "[]");
+      if (!current.includes(id)) {
+        current.push(id);
+        localStorage.setItem("watchlist", JSON.stringify(current));
+        alert("Added to watchlist!");
       } else {
-        alert("Already in watchlist");
+        alert("Already in watchlist!");
       }
     }
   </script>
